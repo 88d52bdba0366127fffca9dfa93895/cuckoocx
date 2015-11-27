@@ -38,12 +38,14 @@
     {% if report.total_malwares != 0 %}
         {% for mail in report.mails_have_malwares %}
             <a style="text-decoration: none;" href="#mail_{{mail.id}}" data-toggle="collapse">
-            {% if mail.status > 1 %}
+            {% if mail.highest_malscore >= 6 %}
                 <div class="alert alert-danger signature">
-            {% elif mail.status == 1 %}
+            {% elif mail.highest_malscore >= 2 %}
                 <div class="alert alert-warning signature">
+            {% elif mail.highest_malscore >= 0 %}
+                <div class="alert alert-info signature">
             {% endif %}
-            Mail #{{mail.id}} &#40;{{mail.status}}&#41;</div></a>
+            Mail #{{mail.id}} &#40;{{mail.malscore}}&#41;</div></a>
             
             <div id="mail_{{mail.id}}" class="collapse">
                 <div class="panel panel-primary" style="margin-left: 25px">
@@ -67,6 +69,10 @@
                             <tr>
                                 <th>Status</th>
                                 <td>{{mail.status}}</td>
+                            </tr>
+                            <tr>
+                                <th>MalScore</th>
+                                <td>{{mail.malscore}}</td>
                             </tr>
                             <tr>
                                 <th>Path</th>
@@ -115,14 +121,14 @@
 
                 {% for task in mail.tasks %}
                     <a style="text-decoration: none;" href="#task_{{task.task_id}}" data-toggle="collapse">
-                    {% if task.severity < 1 %}
-                        <div class="alert alert-info signature" style="margin-left: 25px">
-                    {% elif task.severity == 1 %}
-                        <div class="alert alert-warning signature" style="margin-left: 25px">
-                    {% elif task.severity > 1 %}
+                    {% if task.malscore >= 6 %}
                         <div class="alert alert-danger signature" style="margin-left: 25px">
+                    {% elif task.malscore >= 2 %}
+                        <div class="alert alert-warning signature" style="margin-left: 25px">
+                    {% else %}
+                        <div class="alert alert-info signature" style="margin-left: 25px">
                     {% endif %}
-                    Task #{{task.task_id}} - Severity {{task.severity}}</div></a>
+                    Task #{{task.task_id}} - MalScore {{task.malscore}}</div></a>
 
                     <div id="task_{{task.task_id}}" class="collapse panel panel-default"  style="margin-left: 25px">
                         <table class="table table-striped" style="table-layout: fixed;">
@@ -132,8 +138,8 @@
                                     <td><a href="/analysis/{{task.task_id}}">{{task.task_id}}</a></td>
                                 </tr>
                                 <tr>
-                                    <th>Severity</th>
-                                    <td>{{task.severity}}</td>
+                                    <th>Malscore</th>
+                                    <td>{{task.malscore}}</td>
                                 </tr>
                                 {% if task.url %}
                                     <tr>

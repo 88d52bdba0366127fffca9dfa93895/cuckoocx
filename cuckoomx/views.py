@@ -44,7 +44,7 @@ def index(request):
         estimate_hour=None,
         estimate_day=None
     )
-
+    
     states = (
         TASK_PENDING,
         TASK_RUNNING,
